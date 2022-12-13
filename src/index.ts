@@ -1,11 +1,11 @@
 import { loadPyodide } from "pyodide";
-import fs from 'fs';
+import { readFileSync } from 'fs';
 
 async function run_python_code(code: string) {
   let pyodide = await loadPyodide();
 
   //let zipResponse = await fetch("./assets/python.zip");
-  let data = fs.readFileSync('src/assets/python.zip');
+  let data = readFileSync('src/assets/python.zip');
 
   // Slice (copy) its segment of the underlying ArrayBuffer
   let ab = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
