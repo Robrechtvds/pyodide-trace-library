@@ -1,7 +1,9 @@
 import { loadPyodide, TypedArray } from "pyodide";
 
 async function run_python_code(code: string, archive: TypedArray|ArrayBuffer, format: string) {
-  let pyodide = await loadPyodide();
+  let pyodide = await loadPyodide({
+    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.21.3/full/",
+  });
 
   //let zipResponse = await fetch("./assets/python.zip");
   //let data = readFileSync('src/assets/python.zip');
