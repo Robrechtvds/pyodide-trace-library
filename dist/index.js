@@ -10,17 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateTrace = void 0;
-function run_python_code(code, pyodide, archive, format) {
+function generateTrace(code, pyodide, archive, format) {
     return __awaiter(this, void 0, void 0, function* () {
-        //let zipResponse = await fetch("./assets/python.zip");
-        //let data = readFileSync('src/assets/python.zip');
         pyodide.unpackArchive(archive, format);
         let pkg = pyodide.pyimport("code_example");
         return pkg.test_function(code);
     });
-}
-function generateTrace(code, pyodide, archive, format) {
-    console.log("Running code");
-    return run_python_code(code, pyodide, archive, format);
 }
 exports.generateTrace = generateTrace;
