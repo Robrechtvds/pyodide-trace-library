@@ -11,23 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateTrace = void 0;
 const pyodide_1 = require("pyodide");
-const fs_1 = require("fs");
-function run_python_code(code) {
+function run_python_code(code, archive, format) {
     return __awaiter(this, void 0, void 0, function* () {
         let pyodide = yield (0, pyodide_1.loadPyodide)();
         //let zipResponse = await fetch("./assets/python.zip");
-        let data = (0, fs_1.readFileSync)('src/assets/python.zip');
-        // Slice (copy) its segment of the underlying ArrayBuffer
-        let ab = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
-        pyodide.unpackArchive(ab, "zip");
+        //let data = readFileSync('src/assets/python.zip');
+        pyodide.unpackArchive(archive, format);
         let pkg = pyodide.pyimport("code_example");
         return pkg.test_function(code);
     });
 }
-function generateTrace(code) {
+function generateTrace(code, archive, format) {
     console.log("Running code");
-    return run_python_code(code);
+    return run_python_code(code, archive, format);
 }
 exports.generateTrace = generateTrace;
-let data = (0, fs_1.readFileSync)('src/assets/python.zip');
-console.log(data);
