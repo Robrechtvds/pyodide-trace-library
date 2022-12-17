@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,22 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TraceGenerator = exports.generateTrace = void 0;
-const pyodide_worker_runner_1 = require("pyodide-worker-runner");
-function generateTrace(code, pyodide, archive, format, init) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // Only initialize the PyodideInterface if it has not been done
-        if (init) {
-            (0, pyodide_worker_runner_1.initPyodide)(pyodide);
-        }
-        pyodide.unpackArchive(archive, format);
-        let pkg = pyodide.pyimport("code_example");
-        return pkg.test_function(code);
-    });
-}
-exports.generateTrace = generateTrace;
-class TraceGenerator {
+import { initPyodide, PyodideClient } from "pyodide-worker-runner";
+import { makeChannel } from "sync-message";
+export class TraceGenerator {
     constructor(pyodide, init, archive) {
         this.pyodide = pyodide;
         this.pyodide.unpackArchive(archive, "zip");
@@ -33,7 +19,7 @@ class TraceGenerator {
         }
     }
     initPyodide() {
-        (0, pyodide_worker_runner_1.initPyodide)(this.pyodide);
+        initPyodide(this.pyodide);
     }
     generateTrace(code) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,4 +27,23 @@ class TraceGenerator {
         });
     }
 }
-exports.TraceGenerator = TraceGenerator;
+export class TraceGeneratorV2 {
+    constructor() {
+        const channel = makeChannel();
+        this.client = new PyodideClient(() => new Worker(new URL("./worker.js", import.meta.url)), channel);
+    }
+    doStuff() {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("Start to do stuff");
+            const res = this.client.call(this.client.workerProxy.doStuff, 1, 2);
+            return res;
+        });
+    }
+    generateTrace() {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("Running tracegen");
+            const res = this.client.call(this.client.workerProxy.runCode, "print('hello world')", "code");
+            return res;
+        });
+    }
+}
