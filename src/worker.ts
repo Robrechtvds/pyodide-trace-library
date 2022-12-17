@@ -1,10 +1,12 @@
 import * as Comlink from "comlink";
-import {syncExpose} from "comsync";
-import { PyodideInterface } from "pyodide";
-import {pyodideExpose, PyodideExtras } from "pyodide-worker-runner";
+import { PyodideInterface, PyProxy } from "pyodide";
+import { pyodideExpose, PyodideExtras, loadPyodideAndPackage } from "pyodide-worker-runner";
 
-class PythonWorker {
-    //private pyodide: PyodideInterface;
+const pythonPackageUrl = require("!!file-loader!./python.zip").default; //TODO: Does not load in properaly atm! Has to be dropped in manualy
+
+export class PythonWorker {
+    private pyodide: PyodideInterface;
+    private pkg: PyProxy;
 
     /**
      * @return {any} Function to expose a method with Pyodide support
@@ -14,32 +16,27 @@ class PythonWorker {
     }
 
     constructor() {
-        //this.pyodide = pyodide;
+        this.runCode = this.syncExpose()(this.runCode.bind(this));
+        this.pyodide = {} as PyodideInterface;
+        this.pkg = {} as PyProxy;
     }
 
-    public async runCode(extras: PyodideExtras, code: string) {
-        console.log("Run");
-        console.log(extras);
-        console.log(code);
+    public async launch() {
+        this.pyodide = await this.loadPyodide();
+        this.pkg = this.pyodide.pyimport("code_example");
+        console.log("Pyodide has loaded with great success in the worker");
     }
 
+    private async loadPyodide() {
+        return await loadPyodideAndPackage({ url: pythonPackageUrl, format: ".zip" });
+    }
+
+    public async runCode(_syncExtras: PyodideExtras, code: string, code2: string) {
+        return this.pkg.test_function(code);
+    }
 }
 
-// Expose classes and functions as usual with Comlink.
-Comlink.expose(new PythonWorker());
- /**
-    {
-  // Wrap individual functions with syncExpose.
-  // This lets them receive an extra parameter 'syncExtras' at the beginning.
-  // SyncClient.call sends through extra objects behind the scenes needed to construct syncExtras.
-  // The remaining parameters after syncExtras are the arguments passed to SyncClient.call after the proxy method.
-
-  runCode: pyodideExpose((extras, code, pyodide) => {
-    console.log("Running code in worker");
-    if (extras.interruptBuffer) {  // i.e. if SharedArrayBuffer is available so this could be sent by the client
-        //pyodide.setInterruptBuffer(extras.interruptBuffer);
-    }
-    return 3;//pkg.test_function(code);
-  }),
-});
-*/
+let worker = new PythonWorker();
+worker.launch().then(() => {
+    Comlink.expose(worker);
+})

@@ -7,41 +7,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { initPyodide, PyodideClient } from "pyodide-worker-runner";
+import { PyodideClient } from "pyodide-worker-runner";
 import { makeChannel } from "sync-message";
 export class TraceGenerator {
-    constructor(pyodide, init, archive) {
-        this.pyodide = pyodide;
-        this.pyodide.unpackArchive(archive, "zip");
-        this.pkg = this.pyodide.pyimport("code_example");
-        if (init) {
-            this.initPyodide();
-        }
-    }
-    initPyodide() {
-        initPyodide(this.pyodide);
-    }
-    generateTrace(code) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.pkg.test_function(code);
-        });
-    }
-}
-export class TraceGeneratorV2 {
-    constructor(pyodide, init, archive) {
-        this.pyodide = pyodide;
-        this.pyodide.unpackArchive(archive, "zip");
-        this.pkg = this.pyodide.pyimport("code_example");
-        if (init) {
-            initPyodide(this.pyodide); //TODO: Create a pyodide instance if init is false
-        }
+    constructor() {
         const channel = makeChannel();
         this.client = new PyodideClient(() => new Worker(new URL("./worker.js", import.meta.url)), channel);
     }
-    generateTrace() {
+    generateTrace(code) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = this.client.call(this.client.workerProxy.runCode, "print('hello world')", "lol");
-            return res;
+            return this.client.call(this.client.workerProxy.runCode, code);
         });
     }
 }
