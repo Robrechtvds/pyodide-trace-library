@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateTrace = void 0;
+console.log("Hello world!");
 function generateTrace(code, pyodide, archive, format) {
     return __awaiter(this, void 0, void 0, function* () {
         pyodide.unpackArchive(archive, format);
