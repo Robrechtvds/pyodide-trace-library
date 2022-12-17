@@ -28,21 +28,19 @@ export class TraceGenerator {
     }
 }
 export class TraceGeneratorV2 {
-    constructor() {
+    constructor(pyodide, init, archive) {
+        this.pyodide = pyodide;
+        this.pyodide.unpackArchive(archive, "zip");
+        this.pkg = this.pyodide.pyimport("code_example");
+        if (init) {
+            initPyodide(this.pyodide); //TODO: Create a pyodide instance if init is false
+        }
         const channel = makeChannel();
         this.client = new PyodideClient(() => new Worker(new URL("./worker.js", import.meta.url)), channel);
     }
-    doStuff() {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log("Start to do stuff");
-            const res = this.client.call(this.client.workerProxy.doStuff, 1, 2);
-            return res;
-        });
-    }
     generateTrace() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Running tracegen");
-            const res = this.client.call(this.client.workerProxy.runCode, "print('hello world')", "code");
+            const res = this.client.call(this.client.workerProxy.runCode, "print('hello world')", "lol");
             return res;
         });
     }

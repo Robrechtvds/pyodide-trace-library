@@ -8,7 +8,8 @@ export declare class TraceGenerator {
 }
 export declare class TraceGeneratorV2 {
     private client;
-    constructor();
-    doStuff(): Promise<any>;
+    private pyodide;
+    private pkg;
+    constructor(pyodide: PyodideInterface, init: boolean, archive: TypedArray | ArrayBuffer);
     generateTrace(): Promise<any>;
 }

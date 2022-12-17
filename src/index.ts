@@ -28,22 +28,23 @@ export class TraceGenerator {
 
 export class TraceGeneratorV2 {
   private client: PyodideClient;
+  private pyodide: PyodideInterface;
+  private pkg: PyProxy;
 
-  constructor() {
+  constructor(pyodide: PyodideInterface, init: boolean, archive: TypedArray|ArrayBuffer) {
+    this.pyodide = pyodide;
+    this.pyodide.unpackArchive(archive, "zip");
+    this.pkg = this.pyodide.pyimport("code_example");
+    if (init) {
+      initPyodide(this.pyodide); //TODO: Create a pyodide instance if init is false
+    }
+
     const channel = makeChannel();
     this.client = new PyodideClient(() => new Worker(new URL("./worker.js", import.meta.url)), channel);
   }
 
-  public async doStuff() {
-    console.log("Start to do stuff");
-
-    const res =  this.client.call(this.client.workerProxy.doStuff, 1, 2);
-    return res;
-  }
-
   public async generateTrace() {
-    console.log("Running tracegen");
-    const res = this.client.call(this.client.workerProxy.runCode, "print('hello world')", "code");
+    const res = this.client.call(this.client.workerProxy.runCode, "print('hello world')", "lol");
     return res;
   }
 }
