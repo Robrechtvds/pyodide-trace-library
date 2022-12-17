@@ -10,9 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateTrace = void 0;
+const pyodide_worker_runner_1 = require("pyodide-worker-runner");
 console.log("Hello world!");
 function generateTrace(code, pyodide, archive, format) {
     return __awaiter(this, void 0, void 0, function* () {
+        (0, pyodide_worker_runner_1.initPyodide)(pyodide);
         pyodide.unpackArchive(archive, format);
         let pkg = pyodide.pyimport("code_example");
         return pkg.test_function(code);
