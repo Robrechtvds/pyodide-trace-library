@@ -4,7 +4,7 @@ import { pyodideExpose, PyodideExtras, loadPyodideAndPackage } from "pyodide-wor
 
 const pythonPackageUrl = require("!!file-loader!./python.zip").default; //TODO: Does not load in properaly atm! Has to be dropped in manualy
 
-export class PythonWorker {
+class PythonWorker {
     private pyodide: PyodideInterface;
     private pkg: PyProxy;
 

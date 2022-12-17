@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as Comlink from "comlink";
 import { pyodideExpose, loadPyodideAndPackage } from "pyodide-worker-runner";
 const pythonPackageUrl = require("!!file-loader!./python.zip").default; //TODO: Does not load in properaly atm! Has to be dropped in manualy
-export class PythonWorker {
+class PythonWorker {
     /**
      * @return {any} Function to expose a method with Pyodide support
      */
