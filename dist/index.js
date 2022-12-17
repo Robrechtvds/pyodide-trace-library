@@ -9,15 +9,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateTrace = void 0;
+exports.TraceGenerator = exports.generateTrace = void 0;
 const pyodide_worker_runner_1 = require("pyodide-worker-runner");
-console.log("Hello world!");
-function generateTrace(code, pyodide, archive, format) {
+function generateTrace(code, pyodide, archive, format, init) {
     return __awaiter(this, void 0, void 0, function* () {
-        (0, pyodide_worker_runner_1.initPyodide)(pyodide);
+        // Only initialize the PyodideInterface if it has not been done
+        if (init) {
+            (0, pyodide_worker_runner_1.initPyodide)(pyodide);
+        }
         pyodide.unpackArchive(archive, format);
         let pkg = pyodide.pyimport("code_example");
         return pkg.test_function(code);
     });
 }
 exports.generateTrace = generateTrace;
+class TraceGenerator {
+    constructor(pyodide, init, archive) {
+        this.pyodide = pyodide;
+        this.pyodide.unpackArchive(archive, "zip");
+        this.pkg = this.pyodide.pyimport("code_example");
+        if (init) {
+            this.initPyodide();
+        }
+    }
+    initPyodide() {
+        (0, pyodide_worker_runner_1.initPyodide)(this.pyodide);
+    }
+    generateTrace(code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.pkg.test_function(code);
+        });
+    }
+}
+exports.TraceGenerator = TraceGenerator;

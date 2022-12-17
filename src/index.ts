@@ -1,11 +1,25 @@
-import { TypedArray, PyodideInterface } from "pyodide";
+import { TypedArray, PyodideInterface, PyProxy } from "pyodide";
 import { initPyodide } from "pyodide-worker-runner";
 
-export async function generateTrace(code: string, pyodide: PyodideInterface, archive: TypedArray|ArrayBuffer, format: string) :  Promise<string> {
+export class TraceGenerator {
 
-  initPyodide(pyodide);
+  private pyodide: PyodideInterface;
+  private pkg: PyProxy;
 
-  pyodide.unpackArchive(archive, format);
-  let pkg = pyodide.pyimport("code_example");
-  return pkg.test_function(code);
+  constructor(pyodide: PyodideInterface, init: boolean, archive: TypedArray|ArrayBuffer) {
+    this.pyodide = pyodide;
+    this.pyodide.unpackArchive(archive, "zip");
+    this.pkg = this.pyodide.pyimport("code_example");
+    if (init) {
+      this.initPyodide()
+    }
+  }
+
+  private initPyodide(): void {
+    initPyodide(this.pyodide);
+  }
+
+  public async generateTrace(code: string): Promise<string> {
+    return this.pkg.test_function(code);
+  }
 }
