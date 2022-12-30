@@ -37,6 +37,4 @@ class PythonWorker {
 }
 
 let worker = new PythonWorker();
-worker.launch().then(() => {
-    Comlink.expose(worker);
-})
+Comlink.expose(worker);

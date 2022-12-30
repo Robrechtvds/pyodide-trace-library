@@ -9,6 +9,10 @@ export class TraceGenerator {
     this.client = new PyodideClient(() => new Worker(new URL("./worker.js", import.meta.url)), channel);
   }
 
+  public async setup() {
+    await this.client.call(this.client.workerProxy.launch);
+  }
+
   public async generateTrace(code: string) {
     return this.client.call(this.client.workerProxy.runCode, code);
   }

@@ -14,6 +14,11 @@ export class TraceGenerator {
         const channel = makeChannel();
         this.client = new PyodideClient(() => new Worker(new URL("./worker.js", import.meta.url)), channel);
     }
+    setup() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.client.call(this.client.workerProxy.launch);
+        });
+    }
     generateTrace(code) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.client.call(this.client.workerProxy.runCode, code);
