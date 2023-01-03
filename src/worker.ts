@@ -7,6 +7,7 @@ const pythonPackageUrl = require("!!file-loader!./python.zip").default; //TODO: 
 class PythonWorker {
     private pyodide: PyodideInterface;
     private pkg: PyProxy;
+    private inputSt: string[];
 
     /**
      * @return {any} Function to expose a method with Pyodide support
@@ -19,9 +20,10 @@ class PythonWorker {
         this.runCode = this.syncExpose()(this.runCode.bind(this));
         this.pyodide = {} as PyodideInterface;
         this.pkg = {} as PyProxy;
+        this.inputSt = [];
     }
 
-    public async launch() {
+    public async launch(): Promise<void> {
         this.pyodide = await this.loadPyodide();
         this.pkg = this.pyodide.pyimport("code_example");
         console.log("Pyodide has loaded with great success in the worker");
@@ -31,8 +33,24 @@ class PythonWorker {
         return await loadPyodideAndPackage({ url: pythonPackageUrl, format: ".zip" });
     }
 
-    public async runCode(_syncExtras: PyodideExtras, code: string, code2: string) {
-        return this.pkg.test_function(code);
+    public async runCode(_syncExtras: PyodideExtras, code: string, clearInput: boolean = false): Promise<string> {
+        if (clearInput) this.inputSt = [];
+
+        let inputString;
+        if (this.inputSt.length) {
+            inputString = JSON.stringify(this.inputSt);
+        } else {
+            inputString = false;
+        }
+        return this.pkg.test_function(code, inputString);
+    }
+
+    public pushInput(input: string): void {
+        this.inputSt.push(input);
+      }
+    
+    public popInput(): void {
+        this.inputSt.pop();
     }
 }
 

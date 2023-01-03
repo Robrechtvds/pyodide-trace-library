@@ -19,9 +19,19 @@ export class TraceGenerator {
             yield this.client.call(this.client.workerProxy.launch);
         });
     }
-    generateTrace(code) {
+    generateTrace(code, clearInput = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.client.call(this.client.workerProxy.runCode, code);
+            return this.client.call(this.client.workerProxy.runCode, code, clearInput);
+        });
+    }
+    pushInput(input) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.client.workerProxy.pushInput(input);
+        });
+    }
+    popInput() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.client.call(this.client.workerProxy.popInput);
         });
     }
 }

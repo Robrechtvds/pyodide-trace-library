@@ -21,6 +21,7 @@ class PythonWorker {
         this.runCode = this.syncExpose()(this.runCode.bind(this));
         this.pyodide = {};
         this.pkg = {};
+        this.inputSt = [];
     }
     launch() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -34,10 +35,25 @@ class PythonWorker {
             return yield loadPyodideAndPackage({ url: pythonPackageUrl, format: ".zip" });
         });
     }
-    runCode(_syncExtras, code, code2) {
+    runCode(_syncExtras, code, clearInput = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.pkg.test_function(code);
+            if (clearInput)
+                this.inputSt = [];
+            let inputString;
+            if (this.inputSt.length) {
+                inputString = JSON.stringify(this.inputSt);
+            }
+            else {
+                inputString = false;
+            }
+            return this.pkg.test_function(code, inputString);
         });
+    }
+    pushInput(input) {
+        this.inputSt.push(input);
+    }
+    popInput() {
+        this.inputSt.pop();
     }
 }
 let worker = new PythonWorker();
