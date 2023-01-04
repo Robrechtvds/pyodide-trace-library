@@ -16,7 +16,7 @@
     "comsync": "^0.0.8",
     "file-loader": "^6.2.0",
     "fs": "^0.0.1-security",
-    "pyodide": "^0.21.3",
+    "pyodide": "^0.22.0",
     "pyodide-worker-runner": "^1.3.0",
     "sync-message": "^0.0.10",
     "typescript": "^4.9.4"
