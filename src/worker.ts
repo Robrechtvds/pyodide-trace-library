@@ -16,15 +16,23 @@ export class PythonTraceGeneratorWorker {
         return pyodideExpose;
     }
 
-    constructor(pyodide?: PyodideInterface) {
+    constructor(other: string, pyodide?: PyodideInterface, proxy?: PyProxy, f?: () => PyodideInterface) {
+
         this.generateTraceCode = this.syncExpose()(this.generateTraceCode.bind(this));
-        if (pyodide === undefined) {
+
+        if (pyodide !== undefined && proxy !== undefined) {
+            console.log(pyodide.version);
+            console.log(other);
+            this.pyodide = pyodide;
+            this.pkg = proxy;
+            console.log("Pyodide has loaded with great success in the worker");
+        } else {
             this.pyodide = {} as PyodideInterface;
             this.pkg = {} as PyProxy;
-        } else {
-            this.pyodide = pyodide;
-            this.pkg = this.pyodide.pyimport("code_example");
-            console.log("Pyodide has loaded with great success in the worker");
+        }
+        if (f !== undefined) {
+            console.log(f().version);
+            console.log("Was here");
         }
         this.inputSt = [];
     }
