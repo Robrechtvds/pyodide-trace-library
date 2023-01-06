@@ -1,5 +1,6 @@
 import { PyodideClient } from "pyodide-worker-runner";
-export declare class TraceGenerator {
+import PythonTraceGeneratorWorker from "./TraceGeneratorWorker";
+declare class TraceGenerator {
     private client;
     constructor(channel?: any, client?: PyodideClient);
     setup(): Promise<void>;
@@ -7,4 +8,4 @@ export declare class TraceGenerator {
     pushInput(input: string): Promise<void>;
     popInput(): Promise<void>;
 }
-export { PythonTraceGeneratorWorker } from "./worker";
+export { PythonTraceGeneratorWorker, TraceGenerator };

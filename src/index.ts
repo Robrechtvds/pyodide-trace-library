@@ -1,7 +1,8 @@
 import { PyodideClient } from "pyodide-worker-runner";
 import { makeChannel } from "sync-message";
+import PythonTraceGeneratorWorker from "./TraceGeneratorWorker";
 
-export class TraceGenerator {
+class TraceGenerator {
   private client: PyodideClient;
 
   constructor(channel: any = makeChannel(), client?: PyodideClient) {
@@ -28,4 +29,4 @@ export class TraceGenerator {
   }
 }
 
-export { PythonTraceGeneratorWorker } from "./worker";
+export { PythonTraceGeneratorWorker, TraceGenerator };

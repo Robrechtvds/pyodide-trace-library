@@ -9,7 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { PyodideClient } from "pyodide-worker-runner";
 import { makeChannel } from "sync-message";
-export class TraceGenerator {
+import PythonTraceGeneratorWorker from "./TraceGeneratorWorker";
+class TraceGenerator {
     constructor(channel = makeChannel(), client) {
         if (client === undefined)
             client = new PyodideClient(() => new Worker(new URL("./worker.js", import.meta.url)), channel);
@@ -36,4 +37,4 @@ export class TraceGenerator {
         });
     }
 }
-export { PythonTraceGeneratorWorker } from "./worker";
+export { PythonTraceGeneratorWorker, TraceGenerator };
