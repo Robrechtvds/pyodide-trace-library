@@ -10,32 +10,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as Comlink from "comlink";
 import { pyodideExpose, loadPyodideAndPackage } from "pyodide-worker-runner";
 const pythonPackageUrl = require("!!file-loader!./python.zip").default; //TODO: Does not load in properaly atm! Has to be dropped in manualy
-class PythonWorker {
+export class PythonTraceGeneratorWorker {
     /**
      * @return {any} Function to expose a method with Pyodide support
      */
     syncExpose() {
         return pyodideExpose;
     }
-    constructor() {
-        this.runCode = this.syncExpose()(this.runCode.bind(this));
-        this.pyodide = {};
-        this.pkg = {};
+    constructor(pyodide) {
+        this.generateTraceCode = this.syncExpose()(this.generateTraceCode.bind(this));
+        if (pyodide === undefined) {
+            this.pyodide = {};
+            this.pkg = {};
+        }
+        else {
+            this.pyodide = pyodide;
+            this.pkg = this.pyodide.pyimport("code_example");
+            console.log("Pyodide has loaded with great success in the worker");
+        }
         this.inputSt = [];
     }
     launch() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.pyodide = yield this.loadPyodide();
+            this.pyodide = yield this.getPyodide();
             this.pkg = this.pyodide.pyimport("code_example");
             console.log("Pyodide has loaded with great success in the worker");
         });
     }
-    loadPyodide() {
+    getPyodide() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield loadPyodideAndPackage({ url: pythonPackageUrl, format: ".zip" });
         });
     }
-    runCode(_syncExtras, code, clearInput = false) {
+    generateTraceCode(_syncExtras, code, clearInput = false) {
         return __awaiter(this, void 0, void 0, function* () {
             if (clearInput)
                 this.inputSt = [];
@@ -56,5 +63,5 @@ class PythonWorker {
         this.inputSt.pop();
     }
 }
-let worker = new PythonWorker();
+let worker = new PythonTraceGeneratorWorker();
 Comlink.expose(worker);

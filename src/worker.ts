@@ -4,7 +4,7 @@ import { pyodideExpose, PyodideExtras, loadPyodideAndPackage } from "pyodide-wor
 
 const pythonPackageUrl = require("!!file-loader!./python.zip").default; //TODO: Does not load in properaly atm! Has to be dropped in manualy
 
-class PythonWorker {
+export class PythonTraceGeneratorWorker {
     private pyodide: PyodideInterface;
     private pkg: PyProxy;
     private inputSt: string[];
@@ -16,24 +16,30 @@ class PythonWorker {
         return pyodideExpose;
     }
 
-    constructor() {
-        this.runCode = this.syncExpose()(this.runCode.bind(this));
-        this.pyodide = {} as PyodideInterface;
-        this.pkg = {} as PyProxy;
+    constructor(pyodide?: PyodideInterface) {
+        this.generateTraceCode = this.syncExpose()(this.generateTraceCode.bind(this));
+        if (pyodide === undefined) {
+            this.pyodide = {} as PyodideInterface;
+            this.pkg = {} as PyProxy;
+        } else {
+            this.pyodide = pyodide;
+            this.pkg = this.pyodide.pyimport("code_example");
+            console.log("Pyodide has loaded with great success in the worker");
+        }
         this.inputSt = [];
     }
 
     public async launch(): Promise<void> {
-        this.pyodide = await this.loadPyodide();
+        this.pyodide = await this.getPyodide();
         this.pkg = this.pyodide.pyimport("code_example");
         console.log("Pyodide has loaded with great success in the worker");
     }
 
-    private async loadPyodide() {
+    private async getPyodide(): Promise<PyodideInterface> {
         return await loadPyodideAndPackage({ url: pythonPackageUrl, format: ".zip" });
     }
 
-    public async runCode(_syncExtras: PyodideExtras, code: string, clearInput: boolean = false): Promise<string> {
+    public async generateTraceCode(_syncExtras: PyodideExtras, code: string, clearInput: boolean = false): Promise<string> {
         if (clearInput) this.inputSt = [];
 
         let inputString;
@@ -54,5 +60,5 @@ class PythonWorker {
     }
 }
 
-let worker = new PythonWorker();
+let worker = new PythonTraceGeneratorWorker();
 Comlink.expose(worker);
