@@ -1,5 +1,5 @@
 import { PyodideClient } from "pyodide-worker-runner";
-import PythonTraceGeneratorWorker from "./TraceGeneratorWorker";
+import { PythonTraceGeneratorWorker } from "./TraceGeneratorWorker";
 declare class TraceGenerator {
     private client;
     constructor(channel?: any, client?: PyodideClient);

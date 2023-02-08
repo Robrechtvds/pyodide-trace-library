@@ -3,7 +3,7 @@ import { pyodideExpose, PyodideExtras, loadPyodideAndPackage } from "pyodide-wor
 
 const pythonPackageUrl = require("!!file-loader!./python.zip").default;
 
-export default class PythonTraceGeneratorWorker {
+export class PythonTraceGeneratorWorker {
     private pyodide: PyodideInterface;
     private pkg: PyProxy;
     private inputSt: string[];

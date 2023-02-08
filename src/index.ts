@@ -1,6 +1,6 @@
 import { PyodideClient } from "pyodide-worker-runner";
 import { makeChannel } from "sync-message";
-import PythonTraceGeneratorWorker from "./TraceGeneratorWorker";
+import { PythonTraceGeneratorWorker } from "./TraceGeneratorWorker";
 
 class TraceGenerator {
   private client: PyodideClient;

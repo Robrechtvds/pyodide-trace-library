@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { pyodideExpose, loadPyodideAndPackage } from "pyodide-worker-runner";
 const pythonPackageUrl = require("!!file-loader!./python.zip").default;
-export default class PythonTraceGeneratorWorker {
+export class PythonTraceGeneratorWorker {
     /**
      * @return {any} Function to expose a method with Pyodide support
      */

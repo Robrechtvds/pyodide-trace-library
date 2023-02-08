@@ -1,6 +1,6 @@
 import { PyodideInterface, PyProxy } from "pyodide";
 import { PyodideExtras } from "pyodide-worker-runner";
-export default class PythonTraceGeneratorWorker {
+export declare class PythonTraceGeneratorWorker {
     private pyodide;
     private pkg;
     private inputSt;
