@@ -55,13 +55,13 @@ export default class PythonTraceGeneratorWorker {
             return this.pkg.test_function(code, inputString);
         });
     }
-    test() {
-        console.log("Test");
-    }
     pushInput(input) {
         this.inputSt.push(input);
     }
     popInput() {
         this.inputSt.pop();
+    }
+    clearInput() {
+        this.inputSt = [];
     }
 }

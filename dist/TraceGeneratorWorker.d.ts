@@ -12,7 +12,7 @@ export default class PythonTraceGeneratorWorker {
     launch(): Promise<void>;
     private getPyodide;
     generateTraceCode(_syncExtras: PyodideExtras, code: string, clearInput?: boolean): Promise<string>;
-    test(): void;
     pushInput(input: string): void;
     popInput(): void;
+    clearInput(): void;
 }

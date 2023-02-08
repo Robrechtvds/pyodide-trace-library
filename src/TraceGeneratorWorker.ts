@@ -58,4 +58,8 @@ export default class PythonTraceGeneratorWorker {
     public popInput(): void {
         this.inputSt.pop();
     }
+
+    public clearInput(): void {
+        this.inputSt = [];
+    }
 }
